@@ -167,8 +167,8 @@
 
   <!-- 備註 -->
   <div class="card">
-    <div class="card-title">備註（每行一條，留空用預設）</div>
-    <textarea id="notes" placeholder="留空則使用預設備註"></textarea>
+    <div class="card-title">備註（每行一條）</div>
+    <textarea id="notes"></textarea>
   </div>
 
   <button class="btn-submit" id="btn-submit" onclick="generate()">產 生 PDF</button>
@@ -180,6 +180,24 @@
 // 預設今天日期（台北）
 const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' });
 document.getElementById('date').value = today;
+
+// 預設備註
+const DEFAULT_NOTES = {
+  quote:   '本報價單有效期為 30 天。\n確認接受報價後請簽署回傳。',
+  invoice: '請於請款單開立後 60 日內完成付款。\n匯款後請來電或來訊確認,謝謝。',
+};
+
+const notesEl = document.getElementById('notes');
+notesEl.value = DEFAULT_NOTES.quote;
+
+// 切換類型時，若備註未被手動改過，跟著更新預設
+document.querySelectorAll('input[name=type]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const cur = notesEl.value.trim();
+    const isDefault = Object.values(DEFAULT_NOTES).some(d => d === cur);
+    if (isDefault) notesEl.value = DEFAULT_NOTES[radio.value];
+  });
+});
 
 // 初始一個空品項
 addItem();
@@ -205,7 +223,7 @@ async function generate() {
   const address = document.getElementById('address').value.trim();
   const dateVal = document.getElementById('date').value.replace(/-/g, '/');
   const notesRaw = document.getElementById('notes').value.trim();
-  const notes = notesRaw ? notesRaw.split('\n').map(s => s.trim()).filter(Boolean) : null;
+  const notes = notesRaw ? notesRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
 
   const itemRows = document.querySelectorAll('.item-row');
   const items = [];
