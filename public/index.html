@@ -31,6 +31,22 @@
 
   .container { max-width: 560px; margin: 0 auto; padding: 20px 16px; }
 
+  /* 公司選擇器 */
+  .co-toggle {
+    display: flex; border-radius: 8px; overflow: hidden;
+    border: 1.5px solid var(--accent2); margin-bottom: 12px;
+  }
+  .co-toggle label {
+    flex: 1; text-align: center; padding: 10px 4px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    background: #fff; color: var(--muted);
+    transition: background .15s, color .15s; line-height: 1.3;
+  }
+  .co-toggle input[type=radio] { display: none; }
+  .co-toggle input:checked + label {
+    background: var(--accent); color: #fff;
+  }
+
   /* 類型切換 */
   .type-toggle {
     display: flex; border-radius: 8px; overflow: hidden;
@@ -130,6 +146,16 @@
 
 <div class="container">
 
+  <!-- 公司選擇 -->
+  <div class="co-toggle">
+    <input type="radio" name="company" id="c-js" value="jingsheng" checked>
+    <label for="c-js">精盛清潔</label>
+    <input type="radio" name="company" id="c-jm" value="jingmei">
+    <label for="c-jm">精美清潔</label>
+    <input type="radio" name="company" id="c-md" value="meide">
+    <label for="c-md">美的工程行</label>
+  </div>
+
   <!-- 類型切換 -->
   <div class="type-toggle">
     <input type="radio" name="type" id="t-quote" value="quote" checked>
@@ -220,6 +246,7 @@ async function generate() {
   if (!client) { alert('請填入客戶名稱'); return; }
 
   const type    = document.querySelector('input[name=type]:checked').value;
+  const company = document.querySelector('input[name=company]:checked').value;
   const address = document.getElementById('address').value.trim();
   const dateVal = document.getElementById('date').value.replace(/-/g, '/');
   const notesRaw = document.getElementById('notes').value.trim();
@@ -246,7 +273,7 @@ async function generate() {
     const res = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, client, address, date: dateVal, items, notes }),
+      body: JSON.stringify({ type, client, address, date: dateVal, items, notes, company }),
     });
     if (!res.ok) throw new Error(`伺服器錯誤 ${res.status}`);
 
