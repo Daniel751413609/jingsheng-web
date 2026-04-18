@@ -1,4 +1,4 @@
-const chromium = require('@sparticuz/chromium');
+const chromium = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
 
 function buildHtml({ type, client, address, date, items, notes }) {
@@ -161,11 +161,14 @@ module.exports = async function handler(req, res) {
 
   const html = buildHtml(data);
 
+  const executablePath = await chromium.executablePath(
+    'https://github.com/Sparticuz/chromium/releases/download/v131.0.0/chromium-v131.0.0-pack.tar'
+  );
   const browser = await puppeteer.launch({
     args: chromium.args,
     defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
+    executablePath,
+    headless: true,
   });
 
   const page = await browser.newPage();
