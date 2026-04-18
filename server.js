@@ -27,7 +27,8 @@ const FONTS = {
 const COMPANIES = {
   jingsheng: {
     name:    '精 盛 清 潔 有 限 公 司',
-    addr:    '台北市中山區松江路 76 號 7 樓之 1',
+    addr:    '臺北市中山區松江路 76 號 7 樓之 1',
+    taxId:   '60415393',
     tel:     '0931-211-552',
     advisor: '鄭美龍',
     bank:    '101 瑞興商業銀行 松山簡易型分行',
@@ -36,7 +37,8 @@ const COMPANIES = {
   },
   jingmei: {
     name:    '精 美 清 潔 有 限 公 司',
-    addr:    '台北市中山區松江路 76 號 7 樓之 1',
+    addr:    '臺北市大安區忠孝東路 4 段 176 之 1 號 2 樓',
+    taxId:   '24956481',
     tel:     '0931-211-552',
     advisor: '鄭美龍',
     bank:    '012 台北富邦銀行 桂林分行',
@@ -149,7 +151,7 @@ td.tl{text-align:left}td.tr{text-align:right}
 <div class="hdr">
   <div>
     <div class="co-name">${co.name}</div>
-    <div class="co-info">${co.addr}<br>聯絡方式:${co.tel}</div>
+    <div class="co-info">${co.addr}${co.taxId ? '<br>統一編號:' + co.taxId : ''}<br>聯絡方式:${co.tel}</div>
   </div>
   <div class="doc-right">
     <div class="doc-main">${docTitle}</div>
