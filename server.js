@@ -7,10 +7,22 @@ const PORT = process.env.PORT || 3000;
 
 // 啟動時把字型讀進記憶體，嵌入 HTML 避免 Chromium 網路請求失敗
 const fontDir = path.join(__dirname, 'node_modules/@fontsource/noto-sans-tc/files');
-function fontB64(weight) {
-  return fs.readFileSync(path.join(fontDir, `noto-sans-tc-chinese-traditional-${weight}-normal.woff2`)).toString('base64');
+function fontB64(file) {
+  return fs.readFileSync(path.join(fontDir, file)).toString('base64');
 }
-const FONTS = { 300: fontB64(300), 400: fontB64(400), 600: fontB64(600), 700: fontB64(700) };
+// chinese-traditional：完整繁體字集
+// 119：含 ，（U+FF0C）等常用全形標點
+// 113：含 ／（U+FF0F）
+// latin：基本 ASCII
+const FONTS = {
+  tc300: fontB64('noto-sans-tc-chinese-traditional-300-normal.woff2'),
+  tc400: fontB64('noto-sans-tc-chinese-traditional-400-normal.woff2'),
+  tc600: fontB64('noto-sans-tc-chinese-traditional-600-normal.woff2'),
+  tc700: fontB64('noto-sans-tc-chinese-traditional-700-normal.woff2'),
+  s119_400: fontB64('noto-sans-tc-119-400-normal.woff2'),
+  s113_400: fontB64('noto-sans-tc-113-400-normal.woff2'),
+  latin400: fontB64('noto-sans-tc-latin-400-normal.woff2'),
+};
 
 const app = express();
 app.use(express.json());
@@ -57,10 +69,13 @@ function buildHtml({ type, client, address, date, items, notes, fonts }) {
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="utf-8">
 <style>
-@font-face{font-family:"Noto Sans TC";font-weight:300;src:url('data:font/woff2;base64,${fonts[300]}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts[400]}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:600;src:url('data:font/woff2;base64,${fonts[600]}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:700;src:url('data:font/woff2;base64,${fonts[700]}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:300;src:url('data:font/woff2;base64,${fonts.tc300}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.tc400}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:600;src:url('data:font/woff2;base64,${fonts.tc600}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:700;src:url('data:font/woff2;base64,${fonts.tc700}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.s119_400}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.s113_400}') format('woff2')}
+@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.latin400}') format('woff2')}
 @page{size:A4;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans TC",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
@@ -173,6 +188,7 @@ app.post('/api/generate', async (req, res) => {
     items,
     notes: notes || defaultNotes,
     fonts: FONTS,
+
   };
 
   const html = buildHtml(data);
