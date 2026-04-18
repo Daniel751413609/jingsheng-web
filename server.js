@@ -34,7 +34,7 @@ function buildHtml({ type, client, address, date, items, notes, fonts }) {
   }).join('');
 
   const noteLi = notes.map(n => `<li>${n}</li>`).join('');
-  const addrRow = address ? `<div class="addr">施作地址：${address}</div>` : '';
+  const addrRow = address ? `<div class="addr">施作地址:${address}</div>` : '';
   const bankSection = isInvoice ? `
     <div class="bank-section">
       <div class="bank-title">匯款資訊</div>
@@ -50,9 +50,9 @@ function buildHtml({ type, client, address, date, items, notes, fonts }) {
   const dateLabel = isInvoice ? '請款日期'  : '報價日期';
   const intro     = isInvoice
     ? '茲就下列工程項目提出請款，敬請核撥，謝謝。'
-    : '感謝您的洽詢，針對本次專案內容，以下為初步估價詳情：';
+    : '感謝您的洽詢，針對本次專案內容，以下為初步估價詳情:';
   const grandLabel = isInvoice ? '請款合計 Amount Due' : '總計 Grand Total';
-  const signLabel  = isInvoice ? '核准付款簽章：' : '接受上述報價簽章：';
+  const signLabel  = isInvoice ? '核准付款簽章:' : '接受上述報價簽章:';
 
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="utf-8">
@@ -107,17 +107,17 @@ td.tl{text-align:left}td.tr{text-align:right}
 <div class="hdr">
   <div>
     <div class="co-name">精 盛 清 潔 有 限 公 司</div>
-    <div class="co-info">台北市中山區松江路 76 號 7 樓之 1<br>聯絡方式：0931-211-552</div>
+    <div class="co-info">台北市中山區松江路 76 號 7 樓之 1<br>聯絡方式:0931-211-552</div>
   </div>
   <div class="doc-right">
     <div class="doc-main">${docTitle}</div>
     <div class="doc-sub">${docSub}</div>
-    <div class="doc-meta">顧問：鄭美龍<br>${dateLabel}：${date}</div>
+    <div class="doc-meta">顧問:鄭美龍<br>${dateLabel}:${date}</div>
   </div>
 </div>
 <hr>
 <div class="client-sec">
-  <div class="client-to">致：${client}</div>
+  <div class="client-to">致:${client}</div>
   ${addrRow}
   <div class="intro">${intro}</div>
 </div>
@@ -137,7 +137,7 @@ td.tl{text-align:left}td.tr{text-align:right}
 </div>
 ${bankSection}
 <div class="notes">
-  <div class="notes-title">備註說明：</div>
+  <div class="notes-title">備註說明:</div>
   <ol>${noteLi}</ol>
 </div>
 <div class="sign-section">
