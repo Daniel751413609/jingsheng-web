@@ -46,12 +46,10 @@ function buildHtml({ type, client, address, date, items, notes }) {
 
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="utf-8">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 @page{size:A4;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
+body{font-family:"Noto Sans CJK TC","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
 .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
 .co-name{font-size:26pt;letter-spacing:.16em;font-weight:300;margin-bottom:10px}
 .co-info{font-size:9pt;color:#7a6a5e;line-height:1.9}
