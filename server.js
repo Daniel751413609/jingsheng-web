@@ -61,8 +61,8 @@ function buildHtml({ type, client, address, date, items, notes, fonts }) {
   const docSub    = isInvoice ? 'INVOICE'   : 'QUOTATION';
   const dateLabel = isInvoice ? '請款日期'  : '報價日期';
   const intro     = isInvoice
-    ? '茲就下列工程項目提出請款，敬請核撥，謝謝。'
-    : '感謝您的洽詢，針對本次專案內容，以下為初步估價詳情:';
+    ? '茲就下列工程項目提出請款,敬請核撥,謝謝。'
+    : '感謝您的洽詢,針對本次專案內容,以下為初步估價詳情:';
   const grandLabel = isInvoice ? '請款合計 Amount Due' : '總計 Grand Total';
   const signLabel  = isInvoice ? '核准付款簽章:' : '接受上述報價簽章:';
 
@@ -73,9 +73,6 @@ function buildHtml({ type, client, address, date, items, notes, fonts }) {
 @font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.tc400}') format('woff2')}
 @font-face{font-family:"Noto Sans TC";font-weight:600;src:url('data:font/woff2;base64,${fonts.tc600}') format('woff2')}
 @font-face{font-family:"Noto Sans TC";font-weight:700;src:url('data:font/woff2;base64,${fonts.tc700}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.s119_400}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.s113_400}') format('woff2')}
-@font-face{font-family:"Noto Sans TC";font-weight:400;src:url('data:font/woff2;base64,${fonts.latin400}') format('woff2')}
 @page{size:A4;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans TC",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
@@ -159,7 +156,7 @@ ${bankSection}
   <div class="sign-label">${signLabel}</div>
   <div class="sign-box">
     <div class="sign-box-inner">
-      <div class="sign-box-main">簽章／蓋印</div>
+      <div class="sign-box-main">簽章 / 蓋印</div>
       <div class="sign-box-sub">AUTHORIZED SIGNATURE &amp; STAMP</div>
     </div>
   </div>
@@ -179,7 +176,7 @@ app.post('/api/generate', async (req, res) => {
   const isInvoice = type === 'invoice';
 
   const defaultNotes = isInvoice
-    ? ['請於請款單開立後 60 日內完成付款。', '匯款後請來電或來訊確認，謝謝。']
+    ? ['請於請款單開立後 60 日內完成付款。', '匯款後請來電或來訊確認,謝謝。']
     : ['本報價單有效期為 30 天。', '確認接受報價後請簽署回傳。'];
 
   const data = {
