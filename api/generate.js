@@ -1,7 +1,39 @@
 const chromium = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
 
-function buildHtml({ type, client, address, date, items, notes }) {
+const COMPANIES = {
+  jingsheng: {
+    name:    '精 盛 清 潔 有 限 公 司',
+    addr:    '臺北市中山區松江路 76 號 7 樓之 1',
+    taxId:   '60415393',
+    tel:     '0931-211-552',
+    advisor: '鄭美龍',
+    bank:    '101 瑞興商業銀行 松山簡易型分行',
+    account: '0190-2107-2936-0',
+    holder:  '精盛清潔有限公司',
+  },
+  jingmei: {
+    name:    '精 美 清 潔 有 限 公 司',
+    addr:    '臺北市大安區忠孝東路 4 段 176 之 1 號 2 樓',
+    taxId:   '24956481',
+    tel:     '0931-211-552',
+    advisor: '鄭美龍',
+    bank:    '012 台北富邦銀行 桂林分行',
+    account: '0055-0102-2284-72',
+    holder:  '精美清潔有限公司',
+  },
+  meide: {
+    name:    '美 的 工 程 行',
+    addr:    '台北市中山區松江路 76 號 7 樓之 1',
+    tel:     '0931-211-552',
+    advisor: '鄭美龍',
+    bank:    '華南銀行 雙園分行',
+    account: '122-10-017500-9',
+    holder:  '美的工程行',
+  },
+};
+
+function buildHtml({ type, client, address, date, items, notes, co }) {
   const isInvoice = type === 'invoice';
   const subtotal = items.reduce((s, it) => s + it.qty * it.unit_price, 0);
   const tax = Math.round(subtotal * 0.05);
@@ -20,13 +52,14 @@ function buildHtml({ type, client, address, date, items, notes }) {
 
   const noteLi = notes.map(n => `<li>${n}</li>`).join('');
   const addrRow = address ? `<div class="addr">施作地址：${address}</div>` : '';
+  const taxRow = co.taxId ? `<br>統一編號：${co.taxId}` : '';
   const bankSection = isInvoice ? `
     <div class="bank-section">
       <div class="bank-title">匯款資訊</div>
       <div class="bank-row">
-        <div><span class="bank-label">銀行&emsp;</span><span class="bank-value">101 瑞興商業銀行 松山簡易型分行</span></div>
-        <div><span class="bank-label">帳號&emsp;</span><span class="bank-value">0190-2107-2936-0</span></div>
-        <div><span class="bank-label">戶名&emsp;</span><span class="bank-value">精盛清潔有限公司</span></div>
+        <div><span class="bank-label">銀行&emsp;</span><span class="bank-value">${co.bank}</span></div>
+        <div><span class="bank-label">帳號&emsp;</span><span class="bank-value">${co.account}</span></div>
+        <div><span class="bank-label">戶名&emsp;</span><span class="bank-value">${co.holder}</span></div>
       </div>
     </div>` : '';
 
@@ -41,10 +74,12 @@ function buildHtml({ type, client, address, date, items, notes }) {
 
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 @page{size:A4;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"PingFang TC","Hiragino Sans GB","Microsoft JhengHei",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
+body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
 .hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
 .co-name{font-size:26pt;letter-spacing:.16em;font-weight:300;margin-bottom:10px}
 .co-info{font-size:9pt;color:#7a6a5e;line-height:1.9}
@@ -87,13 +122,13 @@ td.tl{text-align:left}td.tr{text-align:right}
 </head><body>
 <div class="hdr">
   <div>
-    <div class="co-name">精 盛 清 潔 有 限 公 司</div>
-    <div class="co-info">台北市中山區松江路 76 號 7 樓之 1<br>聯絡方式：0931-211-552</div>
+    <div class="co-name">${co.name}</div>
+    <div class="co-info">${co.addr}${taxRow}<br>聯絡方式：${co.tel}</div>
   </div>
   <div class="doc-right">
     <div class="doc-main">${docTitle}</div>
     <div class="doc-sub">${docSub}</div>
-    <div class="doc-meta">顧問：鄭美龍<br>${dateLabel}：${date}</div>
+    <div class="doc-meta">顧問：${co.advisor}<br>${dateLabel}：${date}</div>
   </div>
 </div>
 <hr>
@@ -143,20 +178,19 @@ function twToday() {
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { type = 'quote', client = '', address = '', date, items = [], notes } = req.body;
+  const { type = 'quote', client = '', address = '', date, items = [], notes, company = 'jingsheng' } = req.body;
   const isInvoice = type === 'invoice';
+  const co = COMPANIES[company] || COMPANIES.jingsheng;
 
   const defaultNotes = isInvoice
     ? ['請於請款單開立後 60 日內完成付款。', '匯款後請來電或來訊確認，謝謝。']
     : ['本報價單有效期為 30 天。', '確認接受報價後請簽署回傳。'];
 
   const data = {
-    type,
-    client,
-    address,
+    type, client, address, co,
     date: date || twToday(),
     items,
-    notes: notes || defaultNotes,
+    notes: (notes && notes.length) ? notes : defaultNotes,
   };
 
   const html = buildHtml(data);
