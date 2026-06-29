@@ -277,7 +277,7 @@ async function generate() {
   status.textContent = '產生中，請稍候…';
 
   try {
-    const res = await fetch('/api/generate', {
+    const res = await fetch('https://jingsheng-web-production-f4c1.up.railway.app/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type, client, address, date: dateVal, items, notes, company }),
