@@ -1,5 +1,21 @@
 const chromium = require('@sparticuz/chromium-min');
 const puppeteer = require('puppeteer-core');
+const path = require('path');
+const fs = require('fs');
+
+const fontDir = path.join(__dirname, '../node_modules/@fontsource/noto-sans-tc/files');
+function fontB64(file) {
+  return fs.readFileSync(path.join(fontDir, file)).toString('base64');
+}
+const FONTS = {
+  tc300: fontB64('noto-sans-tc-chinese-traditional-300-normal.woff2'),
+  tc400: fontB64('noto-sans-tc-chinese-traditional-400-normal.woff2'),
+  tc600: fontB64('noto-sans-tc-chinese-traditional-600-normal.woff2'),
+  tc700: fontB64('noto-sans-tc-chinese-traditional-700-normal.woff2'),
+  s119_400: fontB64('noto-sans-tc-119-400-normal.woff2'),
+  s113_400: fontB64('noto-sans-tc-113-400-normal.woff2'),
+  latin400: fontB64('noto-sans-tc-latin-400-normal.woff2'),
+};
 
 const COMPANIES = {
   jingsheng: {
@@ -74,9 +90,11 @@ function buildHtml({ type, client, address, date, items, notes, co }) {
 
   return `<!DOCTYPE html>
 <html lang="zh-TW"><head><meta charset="utf-8">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:"Noto Sans TC";font-weight:300;font-style:normal;src:url(data:font/woff2;base64,${FONTS.tc300}) format("woff2")}
+@font-face{font-family:"Noto Sans TC";font-weight:400;font-style:normal;src:url(data:font/woff2;base64,${FONTS.s119_400}) format("woff2"),url(data:font/woff2;base64,${FONTS.s113_400}) format("woff2"),url(data:font/woff2;base64,${FONTS.latin400}) format("woff2"),url(data:font/woff2;base64,${FONTS.tc400}) format("woff2")}
+@font-face{font-family:"Noto Sans TC";font-weight:600;font-style:normal;src:url(data:font/woff2;base64,${FONTS.tc600}) format("woff2")}
+@font-face{font-family:"Noto Sans TC";font-weight:700;font-style:normal;src:url(data:font/woff2;base64,${FONTS.tc700}) format("woff2")}
 @page{size:A4;margin:0}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:#f5ede3;color:#3a2d24;font-size:10pt;padding:52px 60px;min-height:297mm}
@@ -206,7 +224,7 @@ module.exports = async function handler(req, res) {
   });
 
   const page = await browser.newPage();
-  await page.setContent(html, { waitUntil: 'networkidle0' });
+  await page.setContent(html, { waitUntil: 'domcontentloaded' });
   const pdfBuffer = await page.pdf({ format: 'A4', printBackground: true });
   await browser.close();
 
