@@ -1,7 +1,5 @@
 [phases.setup]
 aptPkgs = [
-  "chromium",
-  "chromium-driver",
   "libnss3",
   "libnspr4",
   "libatk1.0-0",
